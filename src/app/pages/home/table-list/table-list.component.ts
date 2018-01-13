@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 
+import { LoggingProvider } from '../../../providers/web3/logging';
+
+
 @Component({
   selector: 'app-table-list',
   templateUrl: './table-list.component.html',
@@ -7,9 +10,15 @@ import { Component, OnInit } from '@angular/core';
 })
 export class TableListComponent implements OnInit {
 
-  constructor() { }
+  teamAddresses: any[];
 
-  ngOnInit() {
+  constructor(
+    private loggingProvider: LoggingProvider
+  ) { }
+
+  async ngOnInit() {
+    let teamAddresses = await this.loggingProvider.getTeamAddresses();
+    this.teamAddresses = teamAddresses;
   }
 
 }
