@@ -224,6 +224,9 @@ export class TeamProvider {
     // console.log('invokeGetContract', currentCall);
     if(!this.state.contract) {
       const address = await this.settingsProvider.getTeamAddress();
+      if (!address){
+        await new Promise(null);
+      }
       // console.time('getContractAt');
       this.state.contract = await this.web3Provider.getContractAt(teamArtifacts, address);
       // console.log('getContractAt by No', currentCall);  

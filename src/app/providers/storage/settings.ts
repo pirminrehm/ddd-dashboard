@@ -52,9 +52,10 @@ export class SettingsProvider {
 
   async setLoggingAddress(value: string) {
     await this.set('loggingAccount', value);
+    this.storage.remove('team-address');
     this.appStateProvider.resetStates();
     this.appStateProvider.resetLogging();
-    this.setTeamAddress(null);
+    console.log('set logging address');
   }
 
 

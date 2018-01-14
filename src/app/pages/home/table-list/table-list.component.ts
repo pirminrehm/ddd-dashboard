@@ -32,6 +32,7 @@ export class TableListComponent implements OnInit {
     console.log(address);
     this.currentAddress = address;
     await this.settingsProvider.setTeamAddress(address);
+    window.location.reload();
   }
 
   private repeatAsyncWithDelay(delay, cb)  {
