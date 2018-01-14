@@ -15,7 +15,7 @@ import { LoggingState } from './../../states/logging';
 @Injectable()
 export class AppStateProvider { 
   private static instances = [];
-
+  private static loggingState: any;
   constructor() {
   }
 
@@ -29,6 +29,7 @@ export class AppStateProvider {
       state = new LocationState();
     } else if(type === AppStateTypes.LOGGING) {
       state = new LoggingState();
+      AppStateProvider.loggingState = state;
     }
     this.instances.push(state);
     
@@ -37,5 +38,12 @@ export class AppStateProvider {
 
   resetStates() {
     AppStateProvider.instances.forEach(instance => instance.reset());
+  }
+
+  resetLogging() {
+    if (AppStateProvider.loggingState) {
+      AppStateProvider.loggingState.resetLogging();
+    }
+      
   }
 }

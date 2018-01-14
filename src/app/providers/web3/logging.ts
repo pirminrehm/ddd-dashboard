@@ -39,8 +39,8 @@ export class LoggingProvider {
   }
 
   async getTeamAddressByIndex(index: number): Promise<Location> {
-    if(!this.state.teamAddressByIndex[index]) {
-      const teamAddress = await this.call('getLocationByIndex', index);
+    if(!this.state.teamAddressByIndex[index] ||  true) {
+      const teamAddress = await this.call('getTeamAddressByIndex', index);
       this.state.teamAddressByIndex[index] = teamAddress;
     }
     return this.state.teamAddressByIndex[index];
@@ -62,8 +62,8 @@ export class LoggingProvider {
 
   private async getContract(): Promise<any> {
     if(!this.state.contract) {
-        const address = await this.settingsProvider.getLoggingAddress();
-        console.log('get contract at');
+      const address = await this.settingsProvider.getLoggingAddress();
+      console.log('get contract at');
       this.state.contract = await this.web3Provider.getContractAt(loggingArtifacts, address);
     }
     return this.state.contract;

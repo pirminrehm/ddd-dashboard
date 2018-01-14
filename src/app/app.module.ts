@@ -37,7 +37,10 @@ import { IonicStorageModule } from '@ionic/storage';
     Web3Provider,
     AppStateProvider,
     SettingsProvider,
-    LoggingProvider
+    LoggingProvider,
+    TeamProvider,
+    VotingProvider,
+    LocationProvider
   ],
   bootstrap: [AppComponent]
 })

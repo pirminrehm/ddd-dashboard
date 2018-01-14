@@ -7,10 +7,13 @@ export class LoggingState implements IState {
 
   public teamAddressByIndex = [];
 
-  reset() {
+  resetLogging() {
     this.contract = null;
     this.count = null;
     
     this.teamAddressByIndex = [];
   }
+
+  reset() {
+  }  
 }

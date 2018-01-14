@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
 import { Web3Provider } from './web3';
 
 // Import our contract artifacts and turn them into usable abstractions.
-import * as locationArtifacts from '../../../build/contracts/Location.json';
+import * as locationArtifacts from '../../../../build/contracts/Location.json';
 
 import { Location } from './../../models/location';
 import { TeamProvider } from './team';

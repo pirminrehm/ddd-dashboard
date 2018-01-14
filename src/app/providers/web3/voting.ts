@@ -8,7 +8,7 @@ import { AppStateProvider } from '../storage/app-state';
 import { VotingState } from '../../states/voting';
 
 // Import our contract artifacts and turn them into usable abstractions.
-import * as votingArtifacts from '../../../build/contracts/Voting.json';
+import * as votingArtifacts from '../../../../build/contracts/Voting.json';
 /*
   Generated class for the Voting provider.
 

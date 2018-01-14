@@ -12,11 +12,12 @@
         <div class="collapse navbar-collapse">
             <form class="navbar-form navbar-right" role="loggingAddress">
                 <div class="form-group form-black is-empty">
-                    <input type="text" class="form-control" placeholder="loggingAddress" #textbox [(ngModel)]="logging.address" name="address" />
+                    <label for="address">Logging-Contract: &nbsp;</label>
+                    <input style="width: 350px" type="text" class="form-control" placeholder="loggingAddress" #textbox [(ngModel)]="logging.address" name="address" />
                     <span class="material-input"></span>
                 </div>
                 <button type="submit" class="btn btn-white btn-round btn-just-icon" (click)="setLoggingContract(loggingAddress)">
-                    <i class="material-icons">search</i><div class="ripple-container"></div>
+                    <i class="material-icons">replay</i><div class="ripple-container"></div>
                 </button>
             </form>
         </div>

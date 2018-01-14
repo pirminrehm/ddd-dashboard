@@ -46,5 +46,6 @@ export class NavbarComponent implements OnInit {
     setLoggingContract() {
       console.log(this.logging.address);      
       this.settingsProvider.setLoggingAddress(this.logging.address);
+      window.location.reload();
     }
 }

@@ -15,8 +15,10 @@
                                     <th>Name</th>
                                 </tr>
                             </thead>
-                            <tbody *ngFor="let teamAddress of teamAddresses;let i = index">
-                                <tr>
+                            <tbody *ngFor="let teamAddress of teamAddresses;let i = index" >
+                                <tr (click)="setTeamAddress(teamAddress)"
+                                style="cursor: pointer"
+                                [ngClass]="{'success': currentAddress == teamAddress}">
                                     <td>{{i}}</td>
                                     <td>{{teamAddress}}</td>
                                 </tr>

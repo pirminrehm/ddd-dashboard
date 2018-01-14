@@ -11,8 +11,8 @@ import { VotingProvider } from './voting';
 import { AppStateProvider } from '../storage/app-state';
 
 // Import our contract artifacts and turn them into usable abstractions.
-import * as teamArtifacts from '../../../build/contracts/Team.json';
-import * as loggingArtifacts from '../../../build/contracts/Logging.json';
+import * as teamArtifacts from '../../../../build/contracts/Team.json';
+import * as loggingArtifacts from '../../../../build/contracts/Logging.json';
 
 /*
   Generated class for the Team provider.
@@ -45,7 +45,7 @@ export class TeamProvider {
   }
 
   async getPendingMembersCount(): Promise<number> {
-    if(!this.state.pendingMembersCount) {
+    if(!this.state.pendingMembersCount || true) {
       const count = await this.call('getPendingMembersCount');
       this.state.pendingMembersCount = await this.web3Provider.fromWeb3Number(count);
     }
@@ -53,7 +53,7 @@ export class TeamProvider {
   }
 
   async getMembersCount(): Promise<number> {
-    if(!this.state.membersCount) {
+    if(!this.state.membersCount|| true) {
       const count = await this.call('getMembersCount');
       this.state.membersCount = await this.web3Provider.fromWeb3Number(count);
     }
@@ -61,7 +61,7 @@ export class TeamProvider {
   }
 
   async getVotingsCount(): Promise<number> {
-    if(!this.state.votingsCount) {
+    if(!this.state.votingsCount || true) {
       const count = await this.call('getVotingsCount');
       this.state.votingsCount = await this.web3Provider.fromWeb3Number(count);
     }
@@ -115,11 +115,11 @@ export class TeamProvider {
     const team = await contract.new(name, creatorName, 0, {from: account, gas: 5000000});
     let loggingAddress = await this.settingsProvider.getLoggingAddress();
     if(loggingAddress) {
-      console.time('addTeamToLogging');
+      // console.time('addTeamToLogging');
       this.web3Provider.getContractAt(loggingArtifacts, loggingAddress).then(logging=>{
          return logging.addTeam(team.address,  {from: account, gas: 5000000});
       }).then(() => {
-        console.timeEnd('addTeamToLogging');        
+        // console.timeEnd('addTeamToLogging');        
       });
     }
     await this.settingsProvider.setTeamAddress(team.address);
@@ -161,6 +161,19 @@ export class TeamProvider {
     const TokenCreated = (await this.getContract()).TokenCreated(); 
     const res = await this.listenOnce(TokenCreated);
     return new TeamInvitation(res.address, res.args.token);
+  }
+
+  public listenToken(cb: Function) {
+    this.getContract().then(instance => {
+      instance.TokenCreated().watch((err, result) => {
+        if(err) {
+          throw err;
+        } else if (result.args.token) {
+          console.log(result);
+          cb(result.args.token);
+        }
+      });
+    });
   }
 
   async onVotingCreated(): Promise<any> {
@@ -206,15 +219,15 @@ export class TeamProvider {
 
   private async getContract(): Promise<any> {
     let currentCall = this.getContractInvokes++
-    console.log('TRY_invokeGetContract', currentCall);
+    // console.log('TRY_invokeGetContract', currentCall);
     await this.waitForAndSetContractCallMutex();
-    console.log('invokeGetContract', currentCall);
+    // console.log('invokeGetContract', currentCall);
     if(!this.state.contract) {
       const address = await this.settingsProvider.getTeamAddress();
-      console.time('getContractAt');
+      // console.time('getContractAt');
       this.state.contract = await this.web3Provider.getContractAt(teamArtifacts, address);
-      console.log('getContractAt by No', currentCall);  
-      console.timeEnd('getContractAt');
+      // console.log('getContractAt by No', currentCall);  
+      // console.timeEnd('getContractAt');
     }
     this.resolveContractCallMutex();
     return this.state.contract;
@@ -223,9 +236,9 @@ export class TeamProvider {
   private async call(name: string, ...params): Promise<any> {
     const contract =  await this.getContract();
     try {
-      console.time(name);
+      // console.time(name);
       let callData = await contract[name].call(...params);
-      console.timeEnd(name);      
+      // console.timeEnd(name);      
       return callData;
     } catch(e) {
       e => this.handleError(e);
