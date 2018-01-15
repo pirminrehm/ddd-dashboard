@@ -220,7 +220,7 @@
                                   "overloadedDeclarations": [
                                     null
                                   ],
-                                  "referencedDeclaration": 1432,
+                                  "referencedDeclaration": 1433,
                                   "type": "msg",
                                   "value": "msg"
                                 },
@@ -357,7 +357,7 @@
                                   "overloadedDeclarations": [
                                     null
                                   ],
-                                  "referencedDeclaration": 1432,
+                                  "referencedDeclaration": 1433,
                                   "type": "msg",
                                   "value": "msg"
                                 },
@@ -819,14 +819,9 @@
     "4447": {
       "events": {},
       "links": {},
-      "address": "0x8cdaf0cd259887258bc13a92c0a6da92698644c0"
-    },
-    "5777": {
-      "events": {},
-      "links": {},
-      "address": "0x8cdaf0cd259887258bc13a92c0a6da92698644c0"
+      "address": "0x55f96411ff9e424e172ab2aa79fa5f19b09632ce"
     }
   },
   "schemaVersion": "1.0.1",
-  "updatedAt": "2018-01-12T09:44:08.565Z"
+  "updatedAt": "2018-01-15T09:08:27.973Z"
 }
