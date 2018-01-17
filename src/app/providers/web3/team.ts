@@ -29,9 +29,8 @@ export class TeamProvider {
   private getContractInvokes: number = 0;
   
   constructor(private web3Provider: Web3Provider,
-              private settingsProvider: SettingsProvider,
-              private votingProvider: VotingProvider) {
-                
+              private settingsProvider: SettingsProvider
+  ) {     
     this.state = AppStateProvider.getInstance(AppStateTypes.TEAM) as TeamState;
   }
 

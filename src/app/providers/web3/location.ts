@@ -19,11 +19,11 @@ import { AppStateProvider } from '../storage/app-state';
 */
 @Injectable()
 export class LocationProvider {
-
   private state: LocationState;
 
   constructor(private web3Provider: Web3Provider,
-              private teamProvider: TeamProvider) {
+              private teamProvider: TeamProvider
+            ) {
     this.state = AppStateProvider.getInstance(AppStateTypes.LOCATION) as LocationState;
   }
 
@@ -46,6 +46,15 @@ export class LocationProvider {
       this.state.locationByIndex[index] = new Location(uri, name);
     }
     return this.state.locationByIndex[index];
+  }
+
+  async getLocationByURI(uri: string): Promise<Location> {
+    if(!this.state.locationByURI[uri]) {
+      const v = await this.call('getLocationByURI', uri);
+      const name = await this.web3Provider.fromWeb3String(v[1]);
+      this.state.locationByURI[uri] = new Location(uri, name);
+    }
+    return this.state.locationByURI[uri];
   }
 
   async addLocation(uri, name) {

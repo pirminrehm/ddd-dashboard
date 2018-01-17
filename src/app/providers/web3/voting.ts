@@ -2,6 +2,7 @@ import { AppStateTypes } from './../../states/types';
 import { Injectable } from '@angular/core';
 
 import { Web3Provider } from './web3';
+import { LocationProvider } from './location';
 import { UserPoint } from '../../models/user-point';
 import { LocationPoint } from '../../models/location-point';
 import { AppStateProvider } from '../storage/app-state';
@@ -20,7 +21,8 @@ export class VotingProvider {
 
   private state: VotingState;
 
-  constructor(private web3Provider: Web3Provider) {
+  constructor(private web3Provider: Web3Provider,
+              private locationProvider: LocationProvider) {
     this.state = AppStateProvider.getInstance(AppStateTypes.VOTING) as VotingState;
   }
 
@@ -66,8 +68,10 @@ export class VotingProvider {
   async getLocationPointsByIndex(address: string, index: number): Promise<LocationPoint> {
     if(!this.state.getLocationPointsByIndex(address, index)) {
       const v = await this.call(address, 'getLocationPointsByIndex', index);
+      
+      const uri = await this.web3Provider.fromWeb3String(v[0]);
       this.state.setLocationPointsByIndex(address, index, new LocationPoint(
-        `Location: ${await this.web3Provider.fromWeb3String(v[0])}`, 
+        await this.locationProvider.getLocationByURI(uri),
         await this.web3Provider.fromWeb3Number(v[1])
       ));
     }
@@ -104,7 +108,7 @@ export class VotingProvider {
     return userPoints;
   }
 
-  async getAllLocationPoints(address: string): Promise<LocationPoint[]> {
+  async getLocationPoints(address: string): Promise<LocationPoint[]> {
     const count = await this.getVotedLocationsCount(address);
 
     const locationPoints = [];
@@ -127,7 +131,10 @@ export class VotingProvider {
 
   private async getContract(address: string): Promise<any> {
     if(!this.state.contract[address]) {
-      this.state.contract[address] = await this.web3Provider.getContractAt(votingArtifacts, address);
+      console.time('clonedVotingArtifacts');
+      let clonedVotingArtifacts = JSON.parse(JSON.stringify(votingArtifacts));
+      console.timeEnd('clonedVotingArtifacts');      
+      this.state.contract[address] = await this.web3Provider.getContractAt(clonedVotingArtifacts, address);
     }
     return this.state.contract[address];
   }
