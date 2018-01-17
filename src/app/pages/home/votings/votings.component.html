@@ -1,0 +1,33 @@
+<div class="main-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header" data-background-color="red">
+                        <h4 class="title">Teams</h4>
+                        <p class="category">Team Addresses of Logging Contract</p>
+                    </div>
+                    <div class="card-content table-responsive">
+                        <table class="table table-hover">
+                            <thead class="text-danger">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                </tr>
+                            </thead>
+                            <tbody *ngFor="let teamAddress of teamAddresses;let i = index" >
+                                <tr (click)="setTeamAddress(teamAddress)"
+                                style="cursor: pointer"
+                                [ngClass]="{'success': currentAddress == teamAddress}">
+                                    <td>{{i}}</td>
+                                    <td>{{teamAddress}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

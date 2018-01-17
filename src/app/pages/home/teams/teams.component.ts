@@ -6,11 +6,11 @@ import { SettingsProvider } from '../../../providers/storage/settings';
 
 
 @Component({
-  selector: 'app-table-list',
-  templateUrl: './table-list.component.html',
-  styleUrls: ['./table-list.component.css']
+  selector: 'app-teams',
+  templateUrl: './teams.component.html',
+  styleUrls: ['./teams.component.css']
 })
-export class TableListComponent implements OnInit {
+export class TeamsComponent implements OnInit {
 
   teamAddresses: any[];
   currentAddress: any;

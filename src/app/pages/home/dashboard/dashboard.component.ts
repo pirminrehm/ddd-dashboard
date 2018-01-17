@@ -17,11 +17,11 @@ export class DashboardComponent implements OnInit {
   
   pendingMembers: PendingMember[];
   members: Member[];
-  teamName: string;
+  teamName: string = '| team not available |';
   teamAddress: string;
   private $: any = (<any>window).$;
-  lastToken: string = 'no token has been created so far';
-  lastTokenDate: string = 'no token has been created so far';
+  lastToken: string = '| no token has been created so far |';
+  lastTokenDate: string = '| no token has been created so far |';
 
 
   constructor(
