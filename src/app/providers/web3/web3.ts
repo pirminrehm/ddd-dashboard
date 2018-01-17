@@ -6,7 +6,7 @@ import * as Web3 from 'web3';
 import contract from 'truffle-contract';
 
 
-const TEST_RPC_IP = '192.168.0.150:9545'; //'192.168.0.150:9545';
+const TEST_RPC_IP = 'localhost:7545'; //'192.168.0.150:9545';
 
 declare var window: any;
 

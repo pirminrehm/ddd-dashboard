@@ -6,6 +6,8 @@ import { Web3Provider } from './web3';
 // Import our contract artifacts and turn them into usable abstractions.
  import * as loggingArtifacts from '../../../../build/contracts/Logging.json';
 
+ import { Team } from './../../models/team';
+
 import { SettingsProvider } from './../storage/settings';
 import { LoggingState } from '../../states/logging';
 import { AppStateProvider } from '../storage/app-state';
@@ -31,28 +33,29 @@ export class LoggingProvider {
   // CONTRACT ACCESSORS
 
   async getCount(): Promise<number> {
-    if(!this.state.count) {
-      const count = await this.call('getTeamAddressCount');
-      this.state.count = await this.web3Provider.fromWeb3Number(count);
-    }
+
+    const count = await this.call('getTeamAddressCount');
+    this.state.count = await this.web3Provider.fromWeb3Number(count);
+
     return this.state.count;
   }
 
-  async getTeamAddressByIndex(index: number): Promise<Location> {
+  async getTeamByIndex(index: number): Promise<Team> {
     if(!this.state.teamAddressByIndex[index] ||  true) {
-      const teamAddress = await this.call('getTeamAddressByIndex', index);
-      this.state.teamAddressByIndex[index] = teamAddress;
+      const team = await this.call('getTeamAddressByIndex', index);
+      const teamName = await this.web3Provider.fromWeb3String(team[1]);
+      this.state.teamAddressByIndex[index] = new Team(team[0], teamName);
     }
     return this.state.teamAddressByIndex[index];
   }
 
   // HELPERS
 
-  async getTeamAddresses(): Promise<Location[]> {
+  async getTeam(): Promise<Team[]> {
     const count = await this.getCount();
     const locations = [];
     for(let i = 0; i < count; i++) {
-      locations.push(await this.getTeamAddressByIndex(i));
+      locations.push(await this.getTeamByIndex(i));
     }
     return locations;
   }

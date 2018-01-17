@@ -4,6 +4,7 @@ import {Location, LocationStrategy, PathLocationStrategy} from '@angular/common'
 import { FormsModule } from '@angular/forms';
 
 import { SettingsProvider } from '../../providers/storage/settings';
+import { TeamProvider } from '../../providers/web3/team';
 
 @Component({
   selector: 'app-navbar',
@@ -14,10 +15,12 @@ export class NavbarComponent implements OnInit {
     private listTitles: any[];
     location: Location;
     logging: any = {};
+    teamName: string;
 
     constructor(
       location: Location,
-      private settingsProvider: SettingsProvider
+      private teamProvider: TeamProvider,
+      private settingsProvider: SettingsProvider,
     ) {
       this.location = location;
     }
@@ -29,6 +32,7 @@ export class NavbarComponent implements OnInit {
     }
 
     getTitle(){
+      this.updateTeamName();
       var titlee = this.location.prepareExternalUrl(this.location.path());
       if(titlee.charAt(0) === '#'){
           titlee = titlee.slice( 2 );
@@ -41,6 +45,12 @@ export class NavbarComponent implements OnInit {
           }
       }
       return 'Dashboard';
+    }
+
+    private updateTeamName() {
+      // this.teamProvider.getTeamName().then(teamName =>  {
+      //   this.teamName = teamName;
+      // });
     }
 
     setLoggingContract() {

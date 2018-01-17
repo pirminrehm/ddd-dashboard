@@ -7,6 +7,7 @@ import { Injectable } from '@angular/core';
 import { Web3Provider } from './web3';
 import { PendingMember } from '../../models/pending-member';
 import { Member } from './../../models/member';
+import { Voting } from './../../models/voting';
 import { VotingProvider } from './voting';
 import { AppStateProvider } from '../storage/app-state';
 
@@ -45,26 +46,20 @@ export class TeamProvider {
   }
 
   async getPendingMembersCount(): Promise<number> {
-    if(!this.state.pendingMembersCount || true) {
-      const count = await this.call('getPendingMembersCount');
-      this.state.pendingMembersCount = await this.web3Provider.fromWeb3Number(count);
-    }
+    const count = await this.call('getPendingMembersCount');
+    this.state.pendingMembersCount = await this.web3Provider.fromWeb3Number(count);
     return this.state.pendingMembersCount;
   }
 
   async getMembersCount(): Promise<number> {
-    if(!this.state.membersCount|| true) {
-      const count = await this.call('getMembersCount');
-      this.state.membersCount = await this.web3Provider.fromWeb3Number(count);
-    }
+    const count = await this.call('getMembersCount');
+    this.state.membersCount = await this.web3Provider.fromWeb3Number(count);
     return this.state.membersCount;
   }
 
   async getVotingsCount(): Promise<number> {
-    if(!this.state.votingsCount || true) {
-      const count = await this.call('getVotingsCount');
-      this.state.votingsCount = await this.web3Provider.fromWeb3Number(count);
-    }
+    const count = await this.call('getVotingsCount');
+    this.state.votingsCount = await this.web3Provider.fromWeb3Number(count);
     return this.state.votingsCount;
   }
 
@@ -96,11 +91,16 @@ export class TeamProvider {
     return this.state.pendingMemberByIndex[index]
   }
 
-  async getVotingAddressByIndex(index: number): Promise<PendingMember> {
-    if(!this.state.votingAddressByIndex[index]) {
-      this.state.votingAddressByIndex[index] = await this.call('getVotingByIndex', index);
+  async getVotingsByIndex(index: number): Promise<PendingMember> {
+    if(!this.state.votingsByIndex[index]) {
+      let voting = await this.call('getVotingByIndex', index);
+      this.state.votingsByIndex[index] = new Voting(
+        voting[0], 
+        await this.web3Provider.fromWeb3String(voting[1]),
+        new Date(await this.web3Provider.fromWeb3Number(voting[2])* 1000).toISOString().replace(/T|Z/g, ' ')
+      );
     }
-    return this.state.votingAddressByIndex[index];
+    return this.state.votingsByIndex[index];
   }
 
   // TRANSACTIONS
@@ -205,11 +205,11 @@ export class TeamProvider {
     return pendingMembers;
   }
 
-  async getVotingAddresses(): Promise<string[]> {
+  async getVotings(): Promise<string[]> {
     const count = await this.getVotingsCount();
     const votings = [];
     for(let i = 0; i < count; i++) {
-      votings.push(await this.getVotingAddressByIndex(i));
+      votings.push(await this.getVotingsByIndex(i));
     }
     return votings;
   }

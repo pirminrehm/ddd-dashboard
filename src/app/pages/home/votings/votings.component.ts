@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import { LoggingProvider } from '../../../providers/web3/logging';
+import { TeamProvider } from '../../../providers/web3/team';
 import { SettingsProvider } from '../../../providers/storage/settings';
 
 
@@ -12,27 +13,24 @@ import { SettingsProvider } from '../../../providers/storage/settings';
 })
 export class VotingsComponent implements OnInit {
 
-  teamAddresses: any[];
+  votings: any[];
   currentAddress: any;
 
   constructor(
     private loggingProvider: LoggingProvider,
-    private settingsProvider: SettingsProvider
+    private settingsProvider: SettingsProvider,
+    private teamProvider: TeamProvider
   ) { }
 
   async ngOnInit() {
     this.repeatAsyncWithDelay(500, async () => {
-      let teamAddresses = await this.loggingProvider.getTeamAddresses();
-      this.currentAddress = await this.settingsProvider.getTeamAddress();
-      this.teamAddresses = teamAddresses;
+      let votings = await this.teamProvider.getVotings();
+      this.votings = votings;
     })
   }
 
-  async setTeamAddress(address) {
-    console.log(address);
+  async setVotingAddress(address) {
     this.currentAddress = address;
-    await this.settingsProvider.setTeamAddress(address);
-    window.location.reload();
   }
 
   private repeatAsyncWithDelay(delay, cb)  {

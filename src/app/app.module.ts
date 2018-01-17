@@ -16,6 +16,7 @@ import { VotingProvider } from './providers/web3/voting';
 import { TeamProvider } from './providers/web3/team';
 import { AppStateProvider } from './providers/storage/app-state';
 import { SettingsProvider } from './providers/storage/settings';
+import { NotificationProvider } from './providers/notification';
 import { IonicStorageModule } from '@ionic/storage';
 
 
@@ -40,7 +41,8 @@ import { IonicStorageModule } from '@ionic/storage';
     LoggingProvider,
     TeamProvider,
     VotingProvider,
-    LocationProvider
+    LocationProvider,
+    NotificationProvider
   ],
   bootstrap: [AppComponent]
 })
