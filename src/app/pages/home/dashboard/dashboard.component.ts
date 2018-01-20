@@ -5,6 +5,7 @@ import { TeamProvider } from '../../../providers/web3/team';
 import { PendingMember } from '../../../models/pending-member';
 import { Member } from '../../../models/member';
 import { NotificationProvider } from '../../../providers/notification';
+import { Observable } from 'rxjs/Observable';
 
 declare function require(path: string): any;
 
@@ -16,29 +17,46 @@ declare function require(path: string): any;
 export class DashboardComponent implements OnInit {
 
   
-  pendingMembers: PendingMember[];
-  members: Member[];
-  teamName: string = '| team not available |';
-  teamAddress: string;
-  lastToken: string = '| no token has been created so far |';
-  lastTokenDate: string = '| no token has been created so far |';
-  private loadTeamsCalls: number = -1;
+  private pendingMembers: PendingMember[];
+  private members: Member[];
+  private teamName: string;
+  private teamAddress: string;
+  private lastToken: string;
+  private lastTokenDate: string;
+  private clearTimouts: boolean;
+  private tokenListenerObservable: Observable<string>;
+  private loadMembersCalls: number = -1;
+  private loadPendingMembersCalls: number = -1;
 
 
   constructor(
     private teamProvider: TeamProvider,
     private settingsProvider: SettingsProvider,
     private notificationProvider: NotificationProvider
-  ) { }
+  ) {  }
 
-  ngOnInit() {
-    // require('../../../../assets/js/charts.js')();
+  async ngOnInit() {
+     // require('../../../../assets/js/charts.js')();
     this.pendingMembers = [];
     this.members = [];
     this.teamAddress = null;
-    this.repeatAsyncWithDelay(500, this.loadTeams);
+    this.clearTimouts = false;
+    this.lastToken = '| no token has been created so far |';
+    this.lastToken = this.lastTokenDate;
+    this.teamName = '| team not available |';
 
-    this.teamProvider.listenToken(token => {
+    let teamAddress = await this.settingsProvider.getTeamAddress();
+    this.teamAddress = teamAddress;
+
+    let teamName = await this.teamProvider.getTeamName();
+    this.teamName = teamName;
+
+    this.repeatAsyncWithDelay(500, this.loadMembers);
+    this.repeatAsyncWithDelay(500, this.loadPendingMembers);
+
+    this.tokenListenerObservable =this.teamProvider.getTokenListener();
+
+    this.tokenListenerObservable.subscribe(token => {
       this.notificationProvider.notify("Token created: " + token, 'warning');
       this.lastToken = token;
       //prepare and show date
@@ -48,35 +66,39 @@ export class DashboardComponent implements OnInit {
     });
   }
 
+  ngOnDestroy() {
+    this.clearTimouts = true;
+    this.teamProvider.destroyTokenListener();
+  }
 
-  private async loadTeams() {
-    this.loadTeamsCalls++;
-    let teamAddress = await this.settingsProvider.getTeamAddress();
-    this.teamAddress = teamAddress;
-    
+  private async loadMembers() {
     if(this.teamAddress) {
-      this.teamProvider.getMembers().then(members => {
-        if (this.members.length < members.length && this.loadTeamsCalls) { //avoid first notify
-          this.notificationProvider.notify('New member!', 'success');
-        }
-        this.members = members;       
-      });
-      this.teamProvider.getPendingMembers().then(pendingMembers =>  {
-        if (this.pendingMembers.length < pendingMembers.length && this.loadTeamsCalls) {
-          this.notificationProvider.notify('New pending member!', 'success');
-        }
-        this.pendingMembers = pendingMembers;
-      });
-      this.teamProvider.getTeamName().then(teamName =>  {
-        this.teamName = teamName;
-      });
+      this.loadMembersCalls++;
+      const members = await this.teamProvider.getMembers();
+      if (this.members.length < members.length && this.loadMembersCalls) { //avoid first notify
+        this.notificationProvider.notify('New member!', 'success');
+      }
+      this.members = members;       
+    }
+  }
+
+  private async loadPendingMembers() {
+    if(this.teamAddress) {
+      this.loadPendingMembersCalls++;   
+      const pendingMembers = await this.teamProvider.getPendingMembers();
+      if (this.pendingMembers.length < pendingMembers.length && this.loadPendingMembersCalls) {
+        this.notificationProvider.notify('New pending member!', 'success');
+      }
+      this.pendingMembers = pendingMembers;
     }
   }
 
   private repeatAsyncWithDelay(delay, cb)  {
     const helperFunction = async () => {
       await cb.call(this);
-      setTimeout(helperFunction, delay)
+      if (!this.clearTimouts) {
+        setTimeout(helperFunction, delay);
+      }
     }
     helperFunction();
   } 

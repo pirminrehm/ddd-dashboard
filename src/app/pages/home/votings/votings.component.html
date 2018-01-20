@@ -18,7 +18,7 @@
                                 </tr>
                             </thead>
                             <tbody *ngFor="let voting of votings;let i = index" >
-                                <tr (click)="setVotingAddress(votingAddress)"
+                                <tr (click)="setVotingAddress(voting.address)"
                                 style="cursor: pointer"
                                 [ngClass]="{'success': currentAddress == voting.address}">
                                     <td>{{i}}</td>
@@ -50,14 +50,14 @@
                                     <th>Timestamp</th>
                                 </tr>
                             </thead>
-                            <tbody *ngFor="let voting of votings;let i = index" >
-                                <tr (click)="setVotingAddress(votingAddress)"
+                            <tbody *ngFor="let closedVoting of closedVotings;let i = index" >
+                                <tr (click)="setVotingAddress(closedVoting.address)"
                                 style="cursor: pointer"
-                                [ngClass]="{'success': currentAddress == voting.address}">
+                                [ngClass]="{'success': currentAddress == closedVoting.address}">
                                     <td>{{i}}</td>
-                                    <td>{{voting.name}}</td>
-                                    <td>{{voting.address}}</td>
-                                    <td>{{voting.timestamp}}</td>
+                                    <td>{{closedVoting.name}}</td>
+                                    <td>{{closedVoting.address}}</td>
+                                    <td>{{closedVoting.timestamp}}</td>
                                 </tr>
                             </tbody>
                         </table>

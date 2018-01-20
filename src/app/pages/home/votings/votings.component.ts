@@ -14,6 +14,7 @@ import { SettingsProvider } from '../../../providers/storage/settings';
 export class VotingsComponent implements OnInit {
 
   votings: any[];
+  closedVotings: any[];
   currentAddress: any;
 
   constructor(
@@ -23,10 +24,18 @@ export class VotingsComponent implements OnInit {
   ) { }
 
   async ngOnInit() {
-    this.repeatAsyncWithDelay(500, async () => {
-      let votings = await this.teamProvider.getVotings();
-      this.votings = votings;
-    })
+    this.repeatAsyncWithDelay(500, this.getVotings);
+    this.repeatAsyncWithDelay(500, this.getClosdVotings);
+  }
+
+  async getVotings () {
+    let votings = await this.teamProvider.getVotings();
+    this.votings = votings;
+  }
+
+  async getClosdVotings () {
+    let closedVotings = await this.teamProvider.getClosedVotings();
+    this.closedVotings = closedVotings;
   }
 
   async setVotingAddress(address) {
@@ -35,7 +44,7 @@ export class VotingsComponent implements OnInit {
 
   private repeatAsyncWithDelay(delay, cb)  {
     const helperFunction = async () => {
-      await cb();
+      await cb.call(this);
       setTimeout(helperFunction, delay)
     }
     helperFunction();

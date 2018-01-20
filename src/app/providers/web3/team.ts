@@ -3,6 +3,7 @@ import { AppStateTypes } from './../../states/types';
 import { TeamInvitation } from './../../models/team-invitation';
 import { SettingsProvider } from './../storage/settings';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs/Observable';
 
 import { Web3Provider } from './web3';
 import { PendingMember } from '../../models/pending-member';
@@ -62,6 +63,11 @@ export class TeamProvider {
     return this.state.votingsCount;
   }
 
+  async getClosedVotingsCount(): Promise<number> {
+    const count = await this.call('getClosedVotingsCount');
+    return this.web3Provider.fromWeb3Number(count);
+  }
+
   async getLocationAddress(): Promise<string> {
     if(!this.state.locationAddress) {
       this.state.locationAddress = await this.call('getLocationAddress');
@@ -80,7 +86,7 @@ export class TeamProvider {
   }
 
   async getPendingMemberByIndex(index: number): Promise<PendingMember> {
-    if(!this.state.pendingMemberByIndex[index]) {
+    if(!this.state.pendingMemberByIndex[index] || true) {
       const v = await this.call('getPendingMemberByIndex', index);
       const name = await this.web3Provider.fromWeb3String(v[1]);
       const avatarId = await this.web3Provider.fromWeb3Number(v[2]);
@@ -91,7 +97,7 @@ export class TeamProvider {
   }
 
   async getVotingsByIndex(index: number): Promise<PendingMember> {
-    if(!this.state.votingsByIndex[index]) {
+    if(!this.state.votingsByIndex[index] || true) {
       let voting = await this.call('getVotingByIndex', index);
       this.state.votingsByIndex[index] = new Voting(
         voting[0], 
@@ -100,6 +106,14 @@ export class TeamProvider {
       );
     }
     return this.state.votingsByIndex[index];
+  }
+
+  async getClosedVotingByIndex(index: number): Promise<PendingMember> {
+    if(!this.state.closedVotingsByIndex[index]) {
+      let voting = await this.call('getClosedVotingByIndex', index);
+      this.state.closedVotingsByIndex[index] = this.prepareVoting(voting);
+    }
+    return this.state.closedVotingsByIndex[index];
   }
 
   // TRANSACTIONS
@@ -162,18 +176,26 @@ export class TeamProvider {
     return new TeamInvitation(res.address, res.args.token);
   }
 
-  public listenToken(cb: Function) {
-    this.getContract().then(instance => {
-      instance.TokenCreated().watch((err, result) => {
-        if(err) {
-          throw err;
-        } else if (result.args.token) {
-          console.log(result);
-          cb(result.args.token);
-        }
+  private tokenListenerInstance: any;
+  public getTokenListener () {
+    return new Observable<string>(observer => {
+      this.getContract().then(instance => {
+        this.tokenListenerInstance = instance.TokenCreated();
+        this.tokenListenerInstance.watch((err, result) => {
+          if(err) {
+            throw err;
+          } else if (result.args.token) {
+            observer.next(result.args.token);
+          }
+        });
       });
     });
   }
+
+  public destroyTokenListener () {
+    this.tokenListenerInstance.stopWatching();
+  }
+  
 
   async onVotingCreated(): Promise<any> {
     const VotingCreated = (await this.getContract()).VotingCreated(); 
@@ -209,6 +231,15 @@ export class TeamProvider {
     const votings = [];
     for(let i = 0; i < count; i++) {
       votings.push(await this.getVotingsByIndex(i));
+    }
+    return votings;
+  }
+  
+  async getClosedVotings(): Promise<Voting[]> {
+    const count = await this.getClosedVotingsCount();
+    const votings = [];
+    for(let i = 0; i < count; i++) {
+      votings.push(await this.getClosedVotingByIndex(i));
     }
     return votings;
   }
@@ -284,6 +315,14 @@ export class TeamProvider {
     this.contractCallMutex = false;
     // console.log('mutex: open');    
     return Promise.resolve();
+  }
+
+  private async prepareVoting(voting) {
+    return new Voting(
+      voting[0], 
+      await this.web3Provider.fromWeb3String(voting[1]),
+      new Date(await this.web3Provider.fromWeb3Number(voting[2])).toISOString()
+    )
   }
   
 }
