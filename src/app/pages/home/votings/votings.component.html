@@ -91,6 +91,18 @@
                     </div>
                 </div>
             </div>
+
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header" data-background-color="blue">
+                        <h4 class="title">Distribution of Votes</h4>
+                        <p class="category">The current Distribution of the Votes</p>
+                    </div>
+                    <div class="card-content">
+                        <page-voting-chart [locationPoints]="locationPoints" displayLegend="true" [reload]="chartReloadSubject"></page-voting-chart>
+                    </div>
+                </div>
+            </div>
         </div>
 
     </div>

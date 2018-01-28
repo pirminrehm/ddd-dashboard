@@ -1,5 +1,5 @@
 export class Location {
-  private name: string;
+  public name: string;
   private uri: string;
 
   constructor(uri: string, name: string) {

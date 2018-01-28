@@ -14,6 +14,8 @@ import { TypographyComponent } from './typography/typography.component';
 import { IconsComponent } from './icons/icons.component';
 import { MapsComponent } from './maps/maps.component';
 import { NotificationsComponent } from './notifications/notifications.component';
+import { VotingChartPage } from './voting-chart/voting-chart';
+
 
 @NgModule({
   imports: [
@@ -33,7 +35,8 @@ import { NotificationsComponent } from './notifications/notifications.component'
     TypographyComponent, 
     IconsComponent, 
     MapsComponent, 
-    NotificationsComponent, 
+    NotificationsComponent,
+    VotingChartPage,
   ]
 })
 export class HomeModule { }

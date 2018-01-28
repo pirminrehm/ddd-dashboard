@@ -6,7 +6,8 @@ import { VotingProvider } from '../../../providers/web3/voting';
 import { SettingsProvider } from '../../../providers/storage/settings';
 import { Member } from '../../../models/member';
 import { NotificationProvider } from '../../../providers/notification';
-
+import { LocationPoint } from '../../../models/location-point';
+import { Subject } from 'rxjs/Subject';
 
 
 @Component({
@@ -22,6 +23,9 @@ export class VotingsComponent implements OnInit {
   private members: Member[];
   private teamAddress: string;
   private clearTimouts: boolean;
+  private locationPoints: LocationPoint[];
+  private allPoints: any = {};
+  private chartReloadSubject = new Subject();
 
   constructor(
     private loggingProvider: LoggingProvider,
@@ -61,6 +65,11 @@ export class VotingsComponent implements OnInit {
   }
 
   async setVotingAddress(address) {
+    if (this.currentAddress !== address) {
+      this.locationPoints = [];
+      this.allPoints[this.currentAddress] = null;
+      this.chartReloadSubject.next();
+    }
     this.currentAddress = address;
     if (this.members) {
       this.members.forEach(member => member.points = null);
@@ -79,6 +88,14 @@ export class VotingsComponent implements OnInit {
       })
       this.members = members;
 
+      let locationPoints = await this.votingProvider.getLocationPoints(this.currentAddress)
+      this.locationPoints = locationPoints;
+      const allPoints = locationPoints.reduce(function (a,b) { return a + b.points; }, 0)
+      const lastAllPoints = this.allPoints[this.currentAddress];
+      if (lastAllPoints != allPoints) {
+        this.chartReloadSubject.next();
+      }
+      this.allPoints[this.currentAddress] = allPoints;
     }
   }
 
