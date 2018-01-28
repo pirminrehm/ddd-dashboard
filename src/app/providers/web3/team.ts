@@ -321,7 +321,7 @@ export class TeamProvider {
     return new Voting(
       voting[0], 
       await this.web3Provider.fromWeb3String(voting[1]),
-      new Date(await this.web3Provider.fromWeb3Number(voting[2])).toISOString()
+      new Date(await this.web3Provider.fromWeb3Number(voting[2]*1000)).toISOString().replace(/T|Z/g, ' ').slice(0,19)
     )
   }
   

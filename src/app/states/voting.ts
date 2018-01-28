@@ -4,6 +4,7 @@ export class VotingState implements IState {
   public contract = {};
 
   public name = {};
+  public winningLocation = {};
   
   private locationPointsByIndexData = {};
   private userPointsByIndexData = {};
@@ -60,6 +61,7 @@ export class VotingState implements IState {
   reset() {
     this.contract = {};
     this.name = {};
+    this.winningLocation = {};
     this.userPointsByIndexData = {};
     this.userPointsByAddressData = {};
     this.locationPointsByIndexData = {};

@@ -1,109 +1,155 @@
 <div class="main-content">
     <div class="container-fluid">
         <div class="row">
+            
             <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header" data-background-color="blue">
-                        <h4 class="title">Votings</h4>
-                        <p class="category">Active Voting Addresses of currrent Team Contract</p>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header" data-background-color="blue">
+                                <h4 class="title">Votings</h4>
+                                <p class="category">Active Voting Addresses of currrent Team Contract</p>
+                            </div>
+                            <div class="card-content table-responsive">
+                                <table class="table table-hover">
+                                    <thead class="text-info">
+                                        <tr>
+                                            <th>Nr</th>
+                                            <th>Name</th>
+                                            <th>Address</th>
+                                            <th>Timestamp</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody *ngFor="let voting of votings;let i = index" >
+                                        <tr (click)="setVotingAddress(voting.address)"
+                                        style="cursor: pointer"
+                                        [ngClass]="{'success': currentAddress == voting.address}">
+                                            <td>{{i}}</td>
+                                            <td>{{voting.name}}</td>
+                                            <td>{{voting.address}}</td>
+                                            <td>{{voting.timestamp}}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
-                    <div class="card-content table-responsive">
-                        <table class="table table-hover">
-                            <thead class="text-primary">
-                                <tr>
-                                    <th>Nr</th>
-                                    <th>Name</th>
-                                    <th>Address</th>
-                                    <th>Timestamp</th>
-                                </tr>
-                            </thead>
-                            <tbody *ngFor="let voting of votings;let i = index" >
-                                <tr (click)="setVotingAddress(voting.address)"
-                                style="cursor: pointer"
-                                [ngClass]="{'success': currentAddress == voting.address}">
-                                    <td>{{i}}</td>
-                                    <td>{{voting.name}}</td>
-                                    <td>{{voting.address}}</td>
-                                    <td>{{voting.timestamp}}</td>
-                                </tr>
-                            </tbody>
-                        </table>
+
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header" data-background-color="orange">
+                                <h4 class="title">Closed Votings</h4>
+                                <p class="category">Closed Votings Addresses of currrent Team Contract</p>
+                            </div>
+                            <div class="card-content table-responsive">
+                                <table class="table table-hover">
+                                    <thead class="text-warning">
+                                        <tr>
+                                            <th>Nr</th>
+                                            <th>Name</th>
+                                            <th>Address</th>
+                                            <th>Timestamp</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody *ngFor="let closedVoting of closedVotings;let i = index" >
+                                        <tr (click)="setVotingAddress(closedVoting.address)"
+                                        style="cursor: pointer"
+                                        [ngClass]="{'success': currentAddress == closedVoting.address}">
+                                            <td>{{i}}</td>
+                                            <td>{{closedVoting.name}}</td>
+                                            <td>{{closedVoting.address}}</td>
+                                            <td>{{closedVoting.timestamp}}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header" data-background-color="orange">
-                        <h4 class="title">Closed Votings</h4>
-                        <p class="category">Closed Votings Addresses of currrent Team Contract</p>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="row">
+                            <div class="card">
+                                <div class="card-header" data-background-color="green">
+                                    <h4 class="title">Who has voted?</h4>
+                                    <p class="category">The number indicates how much points the user has already spended</p>
+                                </div>
+                                <div class="card-content table-responsive">
+                                    <table class="table table-hover">
+                                        <thead class="text-success">
+                                            <tr>
+                                                <th>Nr</th>
+                                                <th>Name</th>
+                                                <th>Points</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody *ngFor="let member of members; let i = index" >
+                                            <tr>
+                                                <td>{{i}}</td>
+                                                <td>{{member.name}}</td>
+                                                <td>{{member.points}}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="card-content table-responsive">
-                        <table class="table table-hover">
-                            <thead class="text-warning">
-                                <tr>
-                                    <th>Nr</th>
-                                    <th>Name</th>
-                                    <th>Address</th>
-                                    <th>Timestamp</th>
-                                </tr>
-                            </thead>
-                            <tbody *ngFor="let closedVoting of closedVotings;let i = index" >
-                                <tr (click)="setVotingAddress(closedVoting.address)"
-                                style="cursor: pointer"
-                                [ngClass]="{'success': currentAddress == closedVoting.address}">
-                                    <td>{{i}}</td>
-                                    <td>{{closedVoting.name}}</td>
-                                    <td>{{closedVoting.address}}</td>
-                                    <td>{{closedVoting.timestamp}}</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    
+                    <div class="col-md-6">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="card card-stats" >
+                                    <div class="card-header" data-background-color="orange">
+                                        <i class="material-icons">local_dining</i>
+                                    </div>
+                                    <div class="card-content">
+                                        <p class="category">Majority Winner</p>
+                                        <h3 class="title">{{ majorityWinner.location.name }}</h3>
+                                    </div>
+                                    <div class="card-footer">
+                                        <div class="stats">
+                                            <i class="material-icons">donut_small</i> The location with the most points wins
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="card card-stats" >
+                                    <div class="card-header" data-background-color="purple">
+                                        <i class="material-icons">local_dining</i>
+                                    </div>
+                                    <div class="card-content">
+                                        <p class="category">Stochastic Winner</p>
+                                        <h3 class="title">{{ stochasticWinner }}</h3>
+                                    </div>
+                                    <div class="card-footer">
+                                        <div class="stats">
+                                            <i class="material-icons">hourglass_empty</i> The winner is random, but the probabilites are weighted
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="card">
+                                    <div class="card-header" data-background-color="green">
+                                        <h4 class="title">Distribution of Votes</h4>
+                                        <p class="category">The current Distribution of the Votes</p>
+                                    </div>
+                                    <div class="card-content">
+                                        <page-voting-chart [locationPoints]="locationPoints" displayLegend="true" [reload]="chartReloadSubject"></page-voting-chart>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <div class="row">
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header" data-background-color="green">
-                        <h4 class="title">Who has voted?</h4>
-                        <p class="category">The number indicates how much points the user has already spended</p>
-                    </div>
-                    <div class="card-content table-responsive">
-                        <table class="table table-hover">
-                            <thead class="text-success">
-                                <tr>
-                                    <th>Nr</th>
-                                    <th>Name</th>
-                                    <th>Points</th>
-                                </tr>
-                            </thead>
-                            <tbody *ngFor="let member of members; let i = index" >
-                                <tr>
-                                    <td>{{i}}</td>
-                                    <td>{{member.name}}</td>
-                                    <td>{{member.points}}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header" data-background-color="blue">
-                        <h4 class="title">Distribution of Votes</h4>
-                        <p class="category">The current Distribution of the Votes</p>
-                    </div>
-                    <div class="card-content">
-                        <page-voting-chart [locationPoints]="locationPoints" displayLegend="true" [reload]="chartReloadSubject"></page-voting-chart>
-                    </div>
-                </div>
-            </div>
-        </div>
-
     </div>
 </div>

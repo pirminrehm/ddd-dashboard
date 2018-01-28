@@ -26,6 +26,8 @@ export class VotingsComponent implements OnInit {
   private locationPoints: LocationPoint[];
   private allPoints: any = {};
   private chartReloadSubject = new Subject();
+  private majorityWinner: any = {location: {name: '-'}};
+  private stochasticWinner: string = '-';
 
   constructor(
     private loggingProvider: LoggingProvider,
@@ -39,9 +41,9 @@ export class VotingsComponent implements OnInit {
     this.clearTimouts = false;
     this.teamAddress = await this.settingsProvider.getTeamAddress();
 
-    this.repeatAsyncWithDelay(500, this.getVotings);
-    this.repeatAsyncWithDelay(500, this.getClosdVotings);
-    this.repeatAsyncWithDelay(500, this.loadMembers);
+    this.repeatAsyncWithDelay(2000, this.getVotings);
+    this.repeatAsyncWithDelay(2000, this.getClosdVotings);
+    this.repeatAsyncWithDelay(1000, this.loadMembers);
   }
 
   ngOnDestroy() {
@@ -60,6 +62,7 @@ export class VotingsComponent implements OnInit {
     let closedVotings = await this.teamProvider.getClosedVotings();
     if (this.closedVotings && this.closedVotings.length < closedVotings.length) { //avoid first notify
       this.notificationProvider.notify('Voting closed!', 'warning');
+      this.updateVotingPoints();      
     }
     this.closedVotings = closedVotings;
   }
@@ -70,10 +73,12 @@ export class VotingsComponent implements OnInit {
       this.allPoints[this.currentAddress] = null;
       this.chartReloadSubject.next();
     }
-    this.currentAddress = address;
     if (this.members) {
       this.members.forEach(member => member.points = null);
     }
+    this.majorityWinner = {location: {name: '-'}};
+    this.stochasticWinner = '-';
+    this.currentAddress = address;
   }
 
   private async loadMembers() {
@@ -83,19 +88,34 @@ export class VotingsComponent implements OnInit {
         let points = await this.votingProvider.getUserPointsByAddress(this.currentAddress, member.account);
         if (member.points != null && member.points < points) {
           this.notificationProvider.notify(member.name + ' has voted', 'success');
+          this.updateVotingPoints();          
+        } else if (member.points < points) {
+          this.updateVotingPoints();
         }
         member.points = points;
       })
-      this.members = members;
+      this.members = members;      
+    }
+  }
 
-      let locationPoints = await this.votingProvider.getLocationPoints(this.currentAddress)
+  private isNotDebounced = true;
+  private async updateVotingPoints() {
+    if (this.isNotDebounced) {
+      this.isNotDebounced = false;
+      setTimeout(_ => this.isNotDebounced = true, 500);
+      let locationPoints = await this.votingProvider.getLocationPoints(this.currentAddress);
+      console.log('points!')
       this.locationPoints = locationPoints;
-      const allPoints = locationPoints.reduce(function (a,b) { return a + b.points; }, 0)
+      const allPoints = locationPoints.reduce((a,b) =>  a + b.points, 0)
       const lastAllPoints = this.allPoints[this.currentAddress];
       if (lastAllPoints != allPoints) {
         this.chartReloadSubject.next();
       }
       this.allPoints[this.currentAddress] = allPoints;
+      
+      this.majorityWinner = locationPoints.reduce((a,b) =>  a.points < b.points ? b : a, locationPoints[0]);
+      this.stochasticWinner = await this.votingProvider.getWinningLocation(this.currentAddress) || '-';
+      this.notificationProvider.notify('Updated Voting Points', 'primary');      
     }
   }
 

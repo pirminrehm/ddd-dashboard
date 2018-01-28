@@ -42,6 +42,14 @@ export class VotingProvider {
     return this.state.name[address];
   }
 
+  async getWinningLocation(address: string): Promise<string> {
+    if(!this.state.winningLocation[address]) {
+      let winningLocation = await this.call(address, 'getWinningLocation');
+      this.state.winningLocation[address] = await this.web3Provider.fromWeb3String(winningLocation);
+    }      
+    return this.state.winningLocation[address];
+  }
+
   async getVotingUsersCount(address: string): Promise<number> {
     const count = await this.call(address, 'getVotingUsersCount');
     return this.web3Provider.fromWeb3Number(count);
@@ -73,7 +81,7 @@ export class VotingProvider {
   }
 
   async getLocationPointsByIndex(address: string, index: number): Promise<LocationPoint> {
-    if(!this.state.getLocationPointsByIndex(address, index)) {
+    if(!this.state.getLocationPointsByIndex(address, index) || true) {
       const v = await this.call(address, 'getLocationPointsByIndex', index);
       
       const uri = await this.web3Provider.fromWeb3String(v[0]);
@@ -150,14 +158,39 @@ export class VotingProvider {
     }
   }
 
+  private contractCallMutex: boolean = false;
+
   private async getContract(address: string): Promise<any> {
+    await this.waitForAndSetContractCallMutex();
     if(!this.state.contract[address]) {
       console.time('clonedVotingArtifacts');
       let clonedVotingArtifacts = JSON.parse(JSON.stringify(votingArtifacts));
       console.timeEnd('clonedVotingArtifacts');      
       this.state.contract[address] = await this.web3Provider.getContractAt(clonedVotingArtifacts, address);
     }
+    this.resolveContractCallMutex();
     return this.state.contract[address];
+  }
+
+  private async waitForAndSetContractCallMutex(): Promise<any> {
+    return new Promise(resolve => {
+      let tryEntrance = () => {
+        if (!this.contractCallMutex) {
+          this.contractCallMutex = true;
+          // console.log('mutex: close');
+          resolve();
+        } else {
+          setTimeout(tryEntrance, 50);
+        }
+      };
+      tryEntrance();
+    });
+  }
+
+  private resolveContractCallMutex(): Promise<any> {
+    this.contractCallMutex = false;
+    // console.log('mutex: open');    
+    return Promise.resolve();
   }
 
   private handleError(e: Error) {
