@@ -105,7 +105,7 @@ export class VotingChartPage implements OnInit {
 
     let data = [['Location', 'Voting points'],
                 ['Nobody voted yet', unassignedPoints]];
-    data.push(...this.locationPoints.map(lp => [lp.location.name, lp.points]));
+    data.push(...this.locationPoints.map(lp => [lp.location.uri, lp.points]));
     
     data = google.visualization.arrayToDataTable(data);
     this.chart.draw(data, this.chartOptions);

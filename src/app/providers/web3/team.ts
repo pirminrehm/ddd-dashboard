@@ -86,14 +86,15 @@ export class TeamProvider {
   }
 
   async getPendingMemberByIndex(index: number): Promise<PendingMember> {
-    if(!this.state.pendingMemberByIndex[index] || true) {
+    let pendingMemberByIndex;
+    try {
       const v = await this.call('getPendingMemberByIndex', index);
       const name = await this.web3Provider.fromWeb3String(v[1]);
       const avatarId = await this.web3Provider.fromWeb3Number(v[2]);
   
-      this.state.pendingMemberByIndex[index] = new PendingMember(v[0], name, avatarId, v[3]);
-    }
-    return this.state.pendingMemberByIndex[index]
+      pendingMemberByIndex = new PendingMember(v[0], name, avatarId, v[3]);
+    } catch(e) {}
+    return pendingMemberByIndex;
   }
 
   async getVotingsByIndex(index: number): Promise<PendingMember> {
