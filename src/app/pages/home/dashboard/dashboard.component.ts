@@ -68,7 +68,9 @@ export class DashboardComponent implements OnInit {
 
   ngOnDestroy() {
     this.clearTimouts = true;
-    this.teamProvider.destroyTokenListener();
+    try {
+      this.teamProvider.destroyTokenListener();
+    } catch (e) {}
   }
 
   private async loadMembers() {

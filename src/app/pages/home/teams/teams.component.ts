@@ -17,6 +17,8 @@ export class TeamsComponent implements OnInit {
   teams: Team[] = [];
   currentAddress: any;
   private loadTeamsCalls: number = -1;
+  private clearTimouts: boolean;
+  private teamCount: any = 'Logging Contract not avialable!'
 
   constructor(
     private loggingProvider: LoggingProvider,
@@ -25,31 +27,39 @@ export class TeamsComponent implements OnInit {
   ) { }
 
   async ngOnInit() {
+    this.clearTimouts = false;
     this.repeatAsyncWithDelay(500, this.loadTeams);
+  }
+
+  ngOnDestroy() {
+    this.clearTimouts = true;
   }
 
   async loadTeams() {
     this.loadTeamsCalls++;
-    let teams = await this.loggingProvider.getTeam();
-    this.currentAddress = await this.settingsProvider.getTeamAddress();
-    if (this.teams.length != teams.length && this.loadTeamsCalls){
-      this.notificationProvider.notify(`New team created: ${teams[teams.length-1].name} `, 'success');
-    }
-    this.teams = teams;
+      let teams = await this.loggingProvider.getTeam();
+      this.teamCount = teams.length;
+      this.currentAddress = await this.settingsProvider.getTeamAddress();
+      if (this.teams.length != teams.length && this.loadTeamsCalls){
+        this.notificationProvider.notify(`New team created: ${teams[teams.length-1].name} `, 'success');
+      }
+      this.teams = teams;
   }
 
   async setTeam(team) {
     this.currentAddress = team.address;
+    this.notificationProvider.notify(`Team choosen: ${team.name} `);
     await this.settingsProvider.setTeamAddress(team.address);
-    this.notificationProvider.notify(`Team choosen: ${team.name} `);    
+    window.location.reload();
   }
 
   private repeatAsyncWithDelay(delay, cb)  {
     const helperFunction = async () => {
       await cb.call(this);
-      setTimeout(helperFunction, delay)
+      if (!this.clearTimouts) {
+        setTimeout(helperFunction, delay);
+      }
     }
     helperFunction();
-  }
-
+  } 
 }

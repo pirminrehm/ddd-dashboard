@@ -1,15 +1,19 @@
-import { AppStateTypes } from './../../states/types';
+import { SettingsProvider } from './../storage/settings';
 import { Injectable } from '@angular/core';
-
-import { Web3Provider } from './web3';
-import { LocationProvider } from './location';
-import { UserPoint } from '../../models/user-point';
-import { LocationPoint } from '../../models/location-point';
-import { AppStateProvider } from '../storage/app-state';
-import { VotingState } from '../../states/voting';
 
 // Import our contract artifacts and turn them into usable abstractions.
 import * as votingArtifacts from '../../../../build/contracts/Voting.json';
+
+import { Web3Provider } from './web3';
+import { AppStateProvider } from '../storage/app-state';
+import { LocationProvider } from './location';
+
+import { UserPoint } from '../../models/user-point';
+import { LocationPoint } from '../../models/location-point';
+import { Location } from './../../models/location';
+import { AppStateTypes } from './../../states/types';
+import { VotingState } from '../../states/voting';
+
 /*
   Generated class for the Voting provider.
 
@@ -22,7 +26,8 @@ export class VotingProvider {
   private state: VotingState;
 
   constructor(private web3Provider: Web3Provider,
-              private locationProvider: LocationProvider) {
+              private locationProvider: LocationProvider,
+              private settingsProvider: SettingsProvider) {
     this.state = AppStateProvider.getInstance(AppStateTypes.VOTING) as VotingState;
   }
 
@@ -38,11 +43,8 @@ export class VotingProvider {
   }
 
   async getVotingUsersCount(address: string): Promise<number> {
-    if(!this.state.usersCount[address]) {
-      const count = await this.call(address, 'getVotingUsersCount');
-      this.state.usersCount[address] = this.web3Provider.fromWeb3Number(count);
-    }
-    return this.state.usersCount[address];
+    const count = await this.call(address, 'getVotingUsersCount');
+    return this.web3Provider.fromWeb3Number(count);
    }
 
   async getUserPointsByIndex(address: string, index: number): Promise<UserPoint> {
@@ -57,12 +59,17 @@ export class VotingProvider {
     return this.state.getUserPointsByIndex(address, index);
   }
 
-  async getVotedLocationsCount(address: string): Promise<number> {
-    if(!this.state.locationsCount[address]) {
-      const count = await this.call(address, 'getVotedLocationsCount');
-      this.state.locationsCount[address] = await this.web3Provider.fromWeb3Number(count);
+  async getUserPointsByAddress(address:string, account: string): Promise<number> {
+    if(!this.state.getUserPointsByAddress(address, account)) {
+      const points = (await this.call(address, 'getUserPointsByAddress', account))[1];
+      this.state.setUserPointsByAddress(address, account, await this.web3Provider.fromWeb3Number(points));
     }
-    return this.state.locationsCount[address];
+    return this.state.getUserPointsByAddress(address, account);
+  }
+
+  async getVotedLocationsCount(address: string): Promise<number> {
+    const count = await this.call(address, 'getVotedLocationsCount');
+    return this.web3Provider.fromWeb3Number(count);
   }
 
   async getLocationPointsByIndex(address: string, index: number): Promise<LocationPoint> {
@@ -86,12 +93,12 @@ export class VotingProvider {
     points = await this.web3Provider.toWeb3Number(points);
 
     const account = await this.web3Provider.getAccount();
-    const contract = await this.getContract(address);
 
-    const trans = await contract.addVote(uri, points, { from: account, gas: 3000000 });
+    const trans = await this.transaction(address, 'addVote', uri, points, {from: account, gas: 3000000 });
 
     this.state.resetLocationPoints(address);
-    this.state.resetUserPoints(address);
+    this.state.resetUserPointsByAddress(address);
+    this.state.resetUserPointsByIndex(address);
 
     return trans;
   }
@@ -118,14 +125,28 @@ export class VotingProvider {
     return locationPoints;
   }
 
+  async hasVoted(address: string): Promise<Boolean> {
+    const account = await this.settingsProvider.getAccount();
+    return (await this.getUserPointsByAddress(address, account)) > 0;
+  }
 
   // INTERNAL
-  private async call(address: string,name: string, ...params): Promise<any> {
+  private async call(address: string, name: string, ...params): Promise<any> {
     const contract =  await this.getContract(address);
     try {
       return contract[name].call(...params);
     } catch(e) {
       e => this.handleError(e);
+    }
+  }
+
+  private async transaction(address: string, name: string, ...params): Promise<any> {
+    const contract = await this.getContract(address);
+    const trans = await contract[name](...params);
+    if(trans.receipt.status != '0x01') {
+      return Promise.reject(
+        `Transaction of ${name} failed with status code ${trans.receipt.status}`
+      );
     }
   }
 

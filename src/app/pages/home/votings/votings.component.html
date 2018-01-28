@@ -1,7 +1,7 @@
 <div class="main-content">
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-6">
                 <div class="card">
                     <div class="card-header" data-background-color="blue">
                         <h4 class="title">Votings</h4>
@@ -9,7 +9,7 @@
                     </div>
                     <div class="card-content table-responsive">
                         <table class="table table-hover">
-                            <thead class="text-danger">
+                            <thead class="text-primary">
                                 <tr>
                                     <th>Nr</th>
                                     <th>Name</th>
@@ -31,18 +31,16 @@
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-6">
                 <div class="card">
                     <div class="card-header" data-background-color="orange">
-                        <h4 class="title">Votings</h4>
+                        <h4 class="title">Closed Votings</h4>
                         <p class="category">Closed Votings Addresses of currrent Team Contract</p>
                     </div>
                     <div class="card-content table-responsive">
                         <table class="table table-hover">
-                            <thead class="text-danger">
+                            <thead class="text-warning">
                                 <tr>
                                     <th>Nr</th>
                                     <th>Name</th>
@@ -58,6 +56,35 @@
                                     <td>{{closedVoting.name}}</td>
                                     <td>{{closedVoting.address}}</td>
                                     <td>{{closedVoting.timestamp}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header" data-background-color="green">
+                        <h4 class="title">Who has voted?</h4>
+                        <p class="category">The number indicates how much points the user has already spended</p>
+                    </div>
+                    <div class="card-content table-responsive">
+                        <table class="table table-hover">
+                            <thead class="text-success">
+                                <tr>
+                                    <th>Nr</th>
+                                    <th>Name</th>
+                                    <th>Points</th>
+                                </tr>
+                            </thead>
+                            <tbody *ngFor="let member of members; let i = index" >
+                                <tr>
+                                    <td>{{i}}</td>
+                                    <td>{{member.name}}</td>
+                                    <td>{{member.points}}</td>
                                 </tr>
                             </tbody>
                         </table>
