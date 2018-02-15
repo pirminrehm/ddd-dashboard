@@ -43,7 +43,7 @@ export class TeamsComponent implements OnInit {
       if (this.teams.length != teams.length && this.loadTeamsCalls){
         this.notificationProvider.notify(`New team created: ${teams[teams.length-1].name} `, 'success');
       }
-      this.teams = teams;
+      this.teams = teams.reverse();
   }
 
   async setTeam(team) {

@@ -20,7 +20,7 @@
                                 <tr (click)="setTeam(team)"
                                 style="cursor: pointer"
                                 [ngClass]="{'success': currentAddress == team.address}">
-                                    <td>{{i}}</td>
+                                    <td>{{teams.length -i -1}}</td>
                                     <td>{{team.name}}</td>
                                     <td>{{team.address}}</td>
                                 </tr>
