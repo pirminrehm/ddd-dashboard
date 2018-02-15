@@ -5,8 +5,13 @@ import * as Web3 from 'web3';
 
 import contract from 'truffle-contract';
 
+import * as tc from '../../../../truffle.json';
+const truffleConfig:any = tc;
 
-const TEST_RPC_IP = '192.168.0.150:7545'; //'192.168.0.150:9545';
+const TEST_RPC_IP = 
+  truffleConfig.networks.development.host +':'
+  + truffleConfig.networks.development.port;
+
 
 declare var window: any;
 
