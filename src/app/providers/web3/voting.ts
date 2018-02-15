@@ -46,7 +46,7 @@ export class VotingProvider {
     if(!this.state.winningLocation[address]) {
       let winningLocation = await this.call(address, 'getWinningLocation');
       this.state.winningLocation[address] = await this.web3Provider.fromWeb3String(winningLocation);
-    }      
+    }
     return this.state.winningLocation[address];
   }
 
@@ -68,7 +68,7 @@ export class VotingProvider {
   }
 
   async getUserPointsByAddress(address:string, account: string): Promise<number> {
-    if(!this.state.getUserPointsByAddress(address, account)) {
+    if(!this.state.getUserPointsByAddress(address, account) || this.state.getUserPointsByAddress(address, account) != 100) {
       const points = (await this.call(address, 'getUserPointsByAddress', account))[1];
       this.state.setUserPointsByAddress(address, account, await this.web3Provider.fromWeb3Number(points));
     }
