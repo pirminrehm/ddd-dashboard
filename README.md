@@ -1,17 +1,15 @@
 # Dashboard for the DDD-DApp
 
-This is an experimental dashboard, which can be usesd to visualize the interaction of [DDD-DApp](https://github.com/pirminrehm/ws17-EthereumBlockchain) users.
-
-Please note that the providers are mostly raw copies from the DApp and for sustainable development in the dashboard not much time was granted.
-
-Licensed under MIT, see [LICENSE.md](./LICENSE.md)
+This is an experimental dashboard, which can be usesd to visualize the interaction of [DDD-DApp](https://github.com/pirminrehm/ddd-dapp) users. Please visit the [DDD-DApp repository](https://github.com/pirminrehm/ddd-dapp) for more information.
 
 Dashboard template by Creative Tim:
 https://github.com/creativetimofficial/material-dashboard-angular
 
+Please note that the providers are mostly raw copies from the DApp and for sustainable development in the dashboard not much time was granted.
+
 ## Setup the project
 ### Prerequisites
-1. You have successfully set up the [DDD-DApp Project](https://github.com/pirminrehm/ws17-EthereumBlockchain)
+1. You have successfully set up the [DDD-DApp Project](https://github.com/pirminrehm/ddd-dapp)
 2. Install globals: `Angular-CLI (1.6.0)`
     ```shell
     $ npm install -g @angular/cli
@@ -25,7 +23,7 @@ https://github.com/creativetimofficial/material-dashboard-angular
 
 ## Workflow
 ### Prerequisites
-To monitor a team, an logging contract has to be deployed to the network (see [DDD-DApp Project](https://github.com/pirminrehm/ws17-EthereumBlockchain#compile-and-deploy-smart-contracts)). The creator of a team has to store the contract address in his DDD-DApp settings. 
+To monitor a team, an logging contract has to be deployed to the network (see [DDD-DApp Project](https://github.com/pirminrehm/ddd-dapp#compile-and-deploy-smart-contracts)). The creator of a team has to store the contract address in his DDD-DApp settings. 
 
 ### Start the dashboard
 1. Serve the Dashboard in a second console tab / window:
@@ -56,3 +54,7 @@ If you have changed your ip in `truffle.js` of the DDD-DApp project, follow the 
     - which location is the majority/stochastic winner
 6. To change the team go to `Teams Overview` to select another one
 > Note: If you have something selected, an auto-update cycle is started. You don't have to refresh the page
+
+## License
+
+Licensed under MIT, see [LICENSE.md](./LICENSE.md)
